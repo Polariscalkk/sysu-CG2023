@@ -21,7 +21,7 @@ const GLfloat MyGLWidget::COLORS[][3] = { //彩虹的颜色
 
 MyGLWidget::MyGLWidget(QWidget* parent) : QGLWidget(parent) {
     fullscreen = false;
-    m_FileName = "C:/Users/user/桌面/fireworkPicture.png";    //应根据实际存放图片的路径进行修改
+    m_FileName = "./fireworkPicture.png";    //应根据实际存放图片的路径进行修改
     m_Rainbow = true;
     m_Color = 0;
     m_Slowdown = 2.0f;
