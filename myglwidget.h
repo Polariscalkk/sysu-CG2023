@@ -45,9 +45,8 @@
 #include <QGLWidget>
 #include <QTimer>
 
-class MyGLWidget : public QGLWidget
-{
-     Q_OBJECT
+class MyGLWidget : public QGLWidget{
+    Q_OBJECT
 
 public:
     explicit MyGLWidget(QWidget * parent = 0);
@@ -75,8 +74,7 @@ private:
     float m_ySpeed;                                 //y方向的速度
     float m_Deep;                                   //移入屏幕的距离
 
-    struct Particle                                 //创建粒子结构体
-    {
+    struct Particle {                               //创建粒子结构体
         bool active;                                //是否激活
         float life;                                 //粒子生命
         float fade;                                 //衰减速度
