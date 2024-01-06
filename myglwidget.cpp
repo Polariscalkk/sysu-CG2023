@@ -133,7 +133,7 @@ void MyGLWidget::paintGL() {                            //从这里开始进行�
 
 void MyGLWidget::keyPressEvent(QKeyEvent* e) {
     switch (e->key()) {
-        case Qt::Key_F1:                                    // F1为全屏和普通屏的切换键
+        case Qt::Key_F1: {                                  // F1为全屏和普通屏的切换键
             fullscreen = !fullscreen;
             if (fullscreen) {
                 showFullScreen();
@@ -143,10 +143,12 @@ void MyGLWidget::keyPressEvent(QKeyEvent* e) {
             }
             updateGL();
             break;
-        case Qt::Key_Escape:                                // ESC为退出键
+        }
+        case Qt::Key_Escape: {                              // ESC为退出键
             close();
             break;
-        case Qt::Key_Tab:                                   // Tab按下使粒子回到原点，产生爆炸
+        }
+        case Qt::Key_Tab: {                                 // Tab按下使粒子回到原点，产生爆炸
             for (int i = 0; i < MAX_PARTICLES; i++) {
                 m_Particles[i].x = 0.0f;
                 m_Particles[i].y = 0.0f;
@@ -158,83 +160,95 @@ void MyGLWidget::keyPressEvent(QKeyEvent* e) {
                 m_Particles[i].zi = float((rand() % 50) - 25.0f) * 10.0f;
             }
             break;
-        case Qt::Key_8:                                     //按下8增加y方向加速度
+        }
+        case Qt::Key_8: {                                   //按下8增加y方向加速度
             for (int i = 0; i < MAX_PARTICLES; i++) {
-                if (m_Particles[i].yg < 3.0f)
-                {
+                if (m_Particles[i].yg < 3.0f) {
                     m_Particles[i].yg += 0.05f;
                 }
             }
             break;
-        case Qt::Key_2:                                     //按下2减少y方向加速度
+        }
+        case Qt::Key_2: {                                   //按下2减少y方向加速度
             for (int i = 0; i < MAX_PARTICLES; i++) {
-                if (m_Particles[i].yg > -3.0f)
-                {
+                if (m_Particles[i].yg > -3.0f) {
                     m_Particles[i].yg -= 0.05f;
                 }
             }
             break;
-        case Qt::Key_6:                                     //按下6增加x方向加速度
+        }
+        case Qt::Key_6: {                                   //按下6增加x方向加速度
             for (int i = 0; i < MAX_PARTICLES; i++) {
                 if (m_Particles[i].xg < 3.0f) {
                     m_Particles[i].xg += 0.05f;
                 }
             }
             break;
-        case Qt::Key_4:                                     //按下4减少x方向加速度
+        }
+        case Qt::Key_4: {                                   //按下4减少x方向加速度
             for (int i = 0; i < MAX_PARTICLES; i++) {
                 if (m_Particles[i].xg > -3.0f) {
                     m_Particles[i].xg -= 0.05f;
                 }
             }
             break;
-        case Qt::Key_Plus:                                  //+ 号按下加速粒子
+        }
+        case Qt::Key_Plus: {                                //+ 号按下加速粒子
             if (m_Slowdown > 1.0f) {
                 m_Slowdown -= 0.05f;
             }
             break;
-        case Qt::Key_Minus:                                 //- 号按下减速粒子
+        }
+        case Qt::Key_Minus: {                               //- 号按下减速粒子
             if (m_Slowdown < 3.0f) {
                 m_Slowdown += 0.05f;
             }
             break;
-        case Qt::Key_PageUp:                                //PageUp按下使粒子靠近屏幕
+        }
+        case Qt::Key_PageUp: {                              //PageUp按下使粒子靠近屏幕
             m_Deep += 0.5f;
             break;
-        case Qt::Key_PageDown:                              //PageDown按下使粒子远离屏幕
+        }
+        case Qt::Key_PageDown: {                            //PageDown按下使粒子远离屏幕
             m_Deep -= 0.5f;
             break;
-        case Qt::Key_Return:                                //回车键为是否彩虹模式的切换键
+        }
+        case Qt::Key_Return: {                              //回车键为是否彩虹模式的切换键
             m_Rainbow = !m_Rainbow;
             break;
-        case Qt::Key_Space:                                 //空格键为颜色切换键
+        }
+        case Qt::Key_Space: {                               //空格键为颜色切换键
             m_Rainbow = false;
             m_Color++;
             if (m_Color > 11) {
                 m_Color = 0;
             }
             break;
-        case Qt::Key_Up:                                    //Up按下增加粒子y轴正方向的速度
+        }
+        case Qt::Key_Up: {                                  //Up按下增加粒子y轴正方向的速度
             if (m_ySpeed < 400.0f) {
                 m_ySpeed += 5.0f;
             }
             break;
-        case Qt::Key_Down:                                  //Down按下减少粒子y轴正方向的速度
+        }
+        case Qt::Key_Down: {                                //Down按下减少粒子y轴正方向的速度
             if (m_ySpeed > -400.0f)
             {
                 m_ySpeed -= 5.0f;
             }
             break;
-        case Qt::Key_Right:                                 //Right按下增加粒子x轴正方向的速度
+        }
+        case Qt::Key_Right: {                               //Right按下增加粒子x轴正方向的速度
             if (m_xSpeed < 400.0f) {
                 m_xSpeed += 5.0f;
             }
             break;
-        case Qt::Key_Left:                                  //Left按下减少粒子x轴正方向的速度
+        }
+        case Qt::Key_Left: {                                //Left按下减少粒子x轴正方向的速度
             if (m_xSpeed > -400.0f) {
                 m_xSpeed -= 5.0f;
             }
             break;
-
+        }
     }
 }
