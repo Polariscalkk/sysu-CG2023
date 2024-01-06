@@ -3,5 +3,6 @@ release/*
 
 .vs/*
 
-
-
+.qmake.stash
+CGTemplate.vcxproj
+CGTemplate.vcxproj.filters
