@@ -1,27 +1,34 @@
 #include "myglwidget.h"
 
-//MyGLWidget::MyGLWidget(QWidget *parent)
-//	:QOpenGLWidget(parent),
-//	scene_id(0)
-//{
-//}
-MyGLWidget::~MyGLWidget() { }
+MyGLWidget::~MyGLWidget()
+{
 
-void MyGLWidget::resizeGL(int w, int h) {
-    glViewport(0, 0, w, h);
-    update();
 }
 
-const GLfloat MyGLWidget::COLORS[][3] = { //å½©è™¹çš„é¢œè‰²
-    {1.0f, 0.5f, 0.5f}, { 1.0f, 0.75f, 0.5f }, { 1.0f, 1.0f, 0.5f },
-    {0.75f, 1.0f, 0.5f}, { 0.5f, 1.0f, 0.5f }, { 0.5f, 1.0f, 0.75f },
-    {0.5f, 1.0f, 1.0f}, { 0.5f, 0.75f, 1.0f }, { 0.5f, 0.5f, 1.0f },
-    {0.75f, 0.5f, 1.0f}, { 1.0f, 0.5f, 1.0f }, { 1.0f, 0.5f, 0.75f }
+// ´¦Àí´°¿Ú´óĞ¡±ä»¯
+void MyGLWidget::resizeGL(int w, int h) {
+    if (h == 0) h = 1;
+    glViewport(0, 0, w, h);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(45.0, static_cast<double>(w) / static_cast<double>(h), 0.1, 100.0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+}
+
+const GLfloat MyGLWidget::COLORS[][3] =                 //²ÊºçµÄÑÕÉ«
+{
+     {1.0f, 0.5f, 0.5f}, { 1.0f, 0.75f, 0.5f }, { 1.0f, 1.0f, 0.5f },
+     {0.75f, 1.0f, 0.5f}, { 0.5f, 1.0f, 0.5f }, { 0.5f, 1.0f, 0.75f },
+     {0.5f, 1.0f, 1.0f}, { 0.5f, 0.75f, 1.0f }, { 0.5f, 0.5f, 1.0f },
+     {0.75f, 0.5f, 1.0f}, { 1.0f, 0.5f, 1.0f }, { 1.0f, 0.5f, 0.75f }
 };
 
-MyGLWidget::MyGLWidget(QWidget* parent) : QGLWidget(parent) {
+MyGLWidget::MyGLWidget(QWidget* parent) :
+     QGLWidget(parent)
+{
     fullscreen = false;
-    m_FileName = "./fireworkPicture.png";    //åº”æ ¹æ®å®é™…å­˜æ”¾å›¾ç‰‡çš„è·¯å¾„è¿›è¡Œä¿®æ”¹
+    m_FileName = "E:/fireworkPicture.png";    //Ó¦¸ù¾İÊµ¼Ê´æ·ÅÍ¼Æ¬µÄÂ·¾¶½øĞĞĞŞ¸Ä
     m_Rainbow = true;
     m_Color = 0;
     m_Slowdown = 2.0f;
@@ -29,71 +36,76 @@ MyGLWidget::MyGLWidget(QWidget* parent) : QGLWidget(parent) {
     m_ySpeed = 0.0f;
     m_Deep = -40.0f;
 
-    for (int i = 0; i < MAX_PARTICLES; i++) {                //å¾ªç¯åˆå§‹åŒ–æ‰€ä»¥ç²’å­
-        m_Particles[i].active = true;                   //ä½¿æ‰€æœ‰ç²’å­ä¸ºæ¿€æ´»çŠ¶æ€
-        m_Particles[i].life = 1.0f;                     //æ‰€æœ‰ç²’å­ç”Ÿå‘½å€¼ä¸ºæœ€å¤§
-        //éšæœºç”Ÿæˆè¡°å‡é€Ÿç‡
+    for (int i = 0; i < MAX_PARTICLES; i++)                 //Ñ­»·³õÊ¼»¯ËùÒÔÁ£×Ó
+    {
+        m_Particles[i].active = true;                   //Ê¹ËùÓĞÁ£×ÓÎª¼¤»î×´Ì¬
+        m_Particles[i].life = 1.0f;                     //ËùÓĞÁ£×ÓÉúÃüÖµÎª×î´ó
+        //Ëæ»úÉú³ÉË¥¼õËÙÂÊ
         m_Particles[i].fade = float(rand() % 100) / 1000.0f + 0.001;
-        //ç²’å­çš„é¢œè‰²
+        //Á£×ÓµÄÑÕÉ«
         m_Particles[i].r = COLORS[int(i * (12.0f / MAX_PARTICLES))][0];
         m_Particles[i].g = COLORS[int(i * (12.0f / MAX_PARTICLES))][1];
         m_Particles[i].b = COLORS[int(i * (12.0f / MAX_PARTICLES))][2];
-         //ç²’å­çš„åˆå§‹ä½ç½®
+         //Á£×ÓµÄ³õÊ¼Î»ÖÃ
         m_Particles[i].x = 0.0f;
         m_Particles[i].y = 0.0f;
         m_Particles[i].z = 0.0f;
 
-        //éšæœºç”Ÿæˆxã€yã€zè½´æ–¹å‘é€Ÿåº¦
+        //Ëæ»úÉú³Éx¡¢y¡¢zÖá·½ÏòËÙ¶È
         m_Particles[i].xi = float((rand() % 50) - 26.0f) * 10.0f;
         m_Particles[i].yi = float((rand() % 50) - 25.0f) * 10.0f;
         m_Particles[i].zi = float((rand() % 50) - 25.0f) * 10.0f;
 
-        m_Particles[i].xg = 0.0f;                       //è®¾ç½®xæ–¹å‘åŠ é€Ÿåº¦ä¸º0
-        m_Particles[i].yg = -0.8f;                      //è®¾ç½®yæ–¹å‘åŠ é€Ÿåº¦ä¸º-0.8
-        m_Particles[i].zg = 0.0f;                       //è®¾ç½®zæ–¹å‘åŠ é€Ÿåº¦ä¸º0
+        m_Particles[i].xg = 0.0f;                       //ÉèÖÃx·½Ïò¼ÓËÙ¶ÈÎª0
+        m_Particles[i].yg = -0.8f;                      //ÉèÖÃy·½Ïò¼ÓËÙ¶ÈÎª-0.8
+        m_Particles[i].zg = 0.0f;                       //ÉèÖÃz·½Ïò¼ÓËÙ¶ÈÎª0
     }
 
-    QTimer * timer = new QTimer(this);                   //åˆ›å»ºä¸€ä¸ªå®šæ—¶å™¨
-    //å°†å®šæ—¶å™¨çš„è®¡æ—¶ä¿¡å·ä¸updateGL()ç»‘å®š
+    QTimer * timer = new QTimer(this);                   //´´½¨Ò»¸ö¶¨Ê±Æ÷
+    //½«¶¨Ê±Æ÷µÄ¼ÆÊ±ĞÅºÅÓëupdateGL()°ó¶¨
     connect(timer, SIGNAL(timeout()), this, SLOT(updateGL()));
-    timer->start(10);                                   //ä»¥10msä¸ºä¸€ä¸ªè®¡æ—¶å‘¨æœŸ
+    timer->start(10);                                   //ÒÔ10msÎªÒ»¸ö¼ÆÊ±ÖÜÆÚ
 }
 
-void MyGLWidget::initializeGL() {                       //æ­¤å¤„å¼€å§‹å¯¹OpenGLè¿›è¡Œæ‰€ä»¥è®¾ç½®
-    m_Texture = bindTexture(QPixmap(m_FileName));       //è½½å…¥ä½å›¾å¹¶è½¬æ¢æˆçº¹ç†
-    glEnable(GL_TEXTURE_2D);                            //å¯ç”¨çº¹ç†æ˜ å°„
+void MyGLWidget::initializeGL()                         //´Ë´¦¿ªÊ¼¶ÔOpenGL½øĞĞËùÒÔÉèÖÃ
+{
+    m_Texture = bindTexture(QPixmap(m_FileName));       //ÔØÈëÎ»Í¼²¢×ª»»³ÉÎÆÀí
+    glEnable(GL_TEXTURE_2D);                            //ÆôÓÃÎÆÀíÓ³Éä
 
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);               //é»‘è‰²èƒŒæ™¯
-    glShadeModel(GL_SMOOTH);                            //å¯ç”¨é˜´å½±å¹³æ»‘
-    glClearDepth(1.0);                                  //è®¾ç½®æ·±åº¦ç¼“å­˜
-    glDisable(GL_DEPTH_TEST);                           //ç¦æ­¢æ·±åº¦æµ‹è¯•
-    glEnable(GL_BLEND);                                 //å¯ç”¨èåˆ
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);                  //è®¾ç½®èåˆå› å­
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  //å‘Šè¯‰ç³»ç»Ÿå¯¹é€è§†è¿›è¡Œä¿®æ­£
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);               //ºÚÉ«±³¾°
+    glShadeModel(GL_SMOOTH);                            //ÆôÓÃÒõÓ°Æ½»¬
+    glClearDepth(1.0);                                  //ÉèÖÃÉî¶È»º´æ
+    glDisable(GL_DEPTH_TEST);                           //½ûÖ¹Éî¶È²âÊÔ
+    glEnable(GL_BLEND);                                 //ÆôÓÃÈÚºÏ
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);                  //ÉèÖÃÈÚºÏÒò×Ó
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  //¸æËßÏµÍ³¶ÔÍ¸ÊÓ½øĞĞĞŞÕı
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
 }
 
-void MyGLWidget::paintGL() {                            //ä»è¿™é‡Œå¼€å§‹è¿›è¡Œæ‰€ä»¥çš„ç»˜åˆ¶
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //æ¸…é™¤å±å¹•å’Œæ·±åº¦ç¼“å­˜
-    glLoadIdentity();                                   //é‡ç½®æ¨¡å‹è§‚å¯ŸçŸ©é˜µ
+void MyGLWidget::paintGL()                              //´ÓÕâÀï¿ªÊ¼½øĞĞËùÒÔµÄ»æÖÆ
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Çå³ıÆÁÄ»ºÍÉî¶È»º´æ
+    glLoadIdentity();                                   //ÖØÖÃÄ£ĞÍ¹Û²ì¾ØÕó
     glBindTexture(GL_TEXTURE_2D, m_Texture);
 
-    for (int i = 0; i < MAX_PARTICLES; i++) {               //å¾ªç¯æ‰€æœ‰çš„ç²’å­
-        if (m_Particles[i].active) {                    //å¦‚æœç²’å­ä¸ºæ¿€æ´»çš„
-            float x = m_Particles[i].x;                 //xè½´ä½ç½®
-            float y = m_Particles[i].y;                 //yè½´ä½ç½®
-            float z = m_Particles[i].z + m_Deep;        //zè½´ä½ç½®
-            //è®¾ç½®ç²’å­é¢œè‰²
+    for (int i = 0; i < MAX_PARTICLES; i++)                 //Ñ­»·ËùÓĞµÄÁ£×Ó
+    {
+        if (m_Particles[i].active)                      //Èç¹ûÁ£×ÓÎª¼¤»îµÄ
+        {
+            float x = m_Particles[i].x;                 //xÖáÎ»ÖÃ
+            float y = m_Particles[i].y;                 //yÖáÎ»ÖÃ
+            float z = m_Particles[i].z + m_Deep;        //zÖáÎ»ÖÃ
+            //ÉèÖÃÁ£×ÓÑÕÉ«
             glColor4f(m_Particles[i].r, m_Particles[i].g,
                       m_Particles[i].b, m_Particles[i].life);
-            glBegin(GL_TRIANGLE_STRIP); //ç»˜åˆ¶ä¸‰è§’å½¢å¸¦
+            glBegin(GL_TRIANGLE_STRIP);                 //»æÖÆÈı½ÇĞÎ´ø
                 glTexCoord2d(1, 1); glVertex3f(x + 0.5f, y + 0.5f, z);
                 glTexCoord2d(0, 1); glVertex3f(x - 0.5f, y + 0.5f, z);
                 glTexCoord2d(1, 0); glVertex3f(x + 0.5f, y - 0.5f, z);
                 glTexCoord2d(0, 0); glVertex3f(x - 0.5f, y - 0.5f, z);
             glEnd();
 
-            //æ›´æ–°å„æ–¹å‘åæ ‡åŠé€Ÿåº¦
+            //¸üĞÂ¸÷·½Ïò×ø±ê¼°ËÙ¶È
             m_Particles[i].x += m_Particles[i].xi / (m_Slowdown * 1000);
             m_Particles[i].y += m_Particles[i].yi / (m_Slowdown * 1000);
             m_Particles[i].z += m_Particles[i].zi / (m_Slowdown * 1000);
@@ -101,21 +113,21 @@ void MyGLWidget::paintGL() {                            //ä»è¿™é‡Œå¼€å§‹è¿›è¡Œæ
             m_Particles[i].yi += m_Particles[i].yg;
             m_Particles[i].zi += m_Particles[i].zg;
 
-            m_Particles[i].life -= m_Particles[i].fade; //å‡å°‘ç²’å­çš„ç”Ÿå‘½å€¼
-            if (m_Particles[i].life < 0.0f) {           //å¦‚æœç²’å­ç”Ÿå‘½å€¼å°äº0
-            
-                m_Particles[i].life = 1.0f;             //äº§ç”Ÿä¸€ä¸ªæ–°ç²’å­
+            m_Particles[i].life -= m_Particles[i].fade; //¼õÉÙÁ£×ÓµÄÉúÃüÖµ
+            if (m_Particles[i].life < 0.0f)             //Èç¹ûÁ£×ÓÉúÃüÖµĞ¡ÓÚ0
+            {
+                m_Particles[i].life = 1.0f;             //²úÉúÒ»¸öĞÂÁ£×Ó
                 m_Particles[i].fade = float(rand() % 100) / 1000.0f + 0.003f;
 
-                m_Particles[i].r = COLORS[m_Color][0];  //è®¾ç½®é¢œè‰²
+                m_Particles[i].r = COLORS[m_Color][0];  //ÉèÖÃÑÕÉ«
                 m_Particles[i].g = COLORS[m_Color][1];
                 m_Particles[i].b = COLORS[m_Color][2];
 
-                m_Particles[i].x = 0.0f;                //ç²’å­å‡ºç°åœ¨å±å¹•ä¸­å¤®
+                m_Particles[i].x = 0.0f;                //Á£×Ó³öÏÖÔÚÆÁÄ»ÖĞÑë
                 m_Particles[i].y = 0.0f;
                 m_Particles[i].z = 0.0f;
 
-                //éšæœºç”Ÿæˆç²’å­é€Ÿåº¦
+                //Ëæ»úÉú³ÉÁ£×ÓËÙ¶È
                 m_Particles[i].xi = m_xSpeed + float((rand() % 60) - 32.0f);
                 m_Particles[i].yi = m_ySpeed + float((rand() % 60) - 30.0f);
                 m_Particles[i].zi = float((rand() % 60) - 30.0f);
@@ -123,17 +135,21 @@ void MyGLWidget::paintGL() {                            //ä»è¿™é‡Œå¼€å§‹è¿›è¡Œæ
         }
     }
 
-    if (m_Rainbow) {                                    //å¦‚æœä¸ºå½©è™¹æ¨¡å¼
-        m_Color++;                                      //è¿›è¡Œé¢œè‰²çš„å˜æ¢
-        if (m_Color > 11) {
+    if (m_Rainbow)                                      //Èç¹ûÎª²ÊºçÄ£Ê½
+    {
+        m_Color++;                                      //½øĞĞÑÕÉ«µÄ±ä»»
+        if (m_Color > 11)
+        {
             m_Color = 0;
         }
     }
 }
 
-void MyGLWidget::keyPressEvent(QKeyEvent* e) {
-    switch (e->key()) {
-        case Qt::Key_F1: {                                  // F1ä¸ºå…¨å±å’Œæ™®é€šå±çš„åˆ‡æ¢é”®
+void MyGLWidget::keyPressEvent(QKeyEvent* e)
+{
+    switch (e->key())
+    {
+        case Qt::Key_F1:                                    //F1ÎªÈ«ÆÁºÍÆÕÍ¨ÆÁµÄÇĞ»»¼ü
             fullscreen = !fullscreen;
             if (fullscreen) {
                 showFullScreen();
@@ -143,112 +159,111 @@ void MyGLWidget::keyPressEvent(QKeyEvent* e) {
             }
             updateGL();
             break;
-        }
-        case Qt::Key_Escape: {                              // ESCä¸ºé€€å‡ºé”®
+        case Qt::Key_Escape:                                //ESCÎªÍË³ö¼ü
             close();
             break;
-        }
-        case Qt::Key_Tab: {                                 // TabæŒ‰ä¸‹ä½¿ç²’å­å›åˆ°åŸç‚¹ï¼Œäº§ç”Ÿçˆ†ç‚¸
-            for (int i = 0; i < MAX_PARTICLES; i++) {
+        case Qt::Key_Tab:                                   //Tab°´ÏÂÊ¹Á£×Ó»Øµ½Ô­µã£¬²úÉú±¬Õ¨
+            for (int i = 0; i < MAX_PARTICLES; i++)
+            {
                 m_Particles[i].x = 0.0f;
                 m_Particles[i].y = 0.0f;
                 m_Particles[i].z = 0.0f;
 
-                //éšæœºç”Ÿæˆé€Ÿåº¦
+                //Ëæ»úÉú³ÉËÙ¶È
                 m_Particles[i].xi = float((rand() % 50) - 26.0f) * 10.0f;
                 m_Particles[i].yi = float((rand() % 50) - 25.0f) * 10.0f;
                 m_Particles[i].zi = float((rand() % 50) - 25.0f) * 10.0f;
             }
             break;
-        }
-        case Qt::Key_8: {                                   //æŒ‰ä¸‹8å¢åŠ yæ–¹å‘åŠ é€Ÿåº¦
-            for (int i = 0; i < MAX_PARTICLES; i++) {
-                if (m_Particles[i].yg < 3.0f) {
+        case Qt::Key_8:                                     //°´ÏÂ8Ôö¼Óy·½Ïò¼ÓËÙ¶È
+            for (int i = 0; i < MAX_PARTICLES; i++)
+            {
+                if (m_Particles[i].yg < 3.0f)
+                {
                     m_Particles[i].yg += 0.05f;
                 }
             }
             break;
-        }
-        case Qt::Key_2: {                                   //æŒ‰ä¸‹2å‡å°‘yæ–¹å‘åŠ é€Ÿåº¦
-            for (int i = 0; i < MAX_PARTICLES; i++) {
-                if (m_Particles[i].yg > -3.0f) {
+        case Qt::Key_2:                                     //°´ÏÂ2¼õÉÙy·½Ïò¼ÓËÙ¶È
+            for (int i = 0; i < MAX_PARTICLES; i++)
+            {
+                if (m_Particles[i].yg > -3.0f)
+                {
                     m_Particles[i].yg -= 0.05f;
                 }
             }
             break;
-        }
-        case Qt::Key_6: {                                   //æŒ‰ä¸‹6å¢åŠ xæ–¹å‘åŠ é€Ÿåº¦
-            for (int i = 0; i < MAX_PARTICLES; i++) {
-                if (m_Particles[i].xg < 3.0f) {
+        case Qt::Key_6:                                     //°´ÏÂ6Ôö¼Óx·½Ïò¼ÓËÙ¶È
+            for (int i = 0; i < MAX_PARTICLES; i++)
+            {
+                if (m_Particles[i].xg < 3.0f)
+                {
                     m_Particles[i].xg += 0.05f;
                 }
             }
             break;
-        }
-        case Qt::Key_4: {                                   //æŒ‰ä¸‹4å‡å°‘xæ–¹å‘åŠ é€Ÿåº¦
-            for (int i = 0; i < MAX_PARTICLES; i++) {
-                if (m_Particles[i].xg > -3.0f) {
+        case Qt::Key_4:                                     //°´ÏÂ4¼õÉÙx·½Ïò¼ÓËÙ¶È
+            for (int i = 0; i < MAX_PARTICLES; i++)
+            {
+                if (m_Particles[i].xg > -3.0f)
+                {
                     m_Particles[i].xg -= 0.05f;
                 }
             }
             break;
-        }
-        case Qt::Key_Plus: {                                //+ å·æŒ‰ä¸‹åŠ é€Ÿç²’å­
-            if (m_Slowdown > 1.0f) {
+        case Qt::Key_Plus:                                  //+ ºÅ°´ÏÂ¼ÓËÙÁ£×Ó
+            if (m_Slowdown > 1.0f)
+            {
                 m_Slowdown -= 0.05f;
             }
             break;
-        }
-        case Qt::Key_Minus: {                               //- å·æŒ‰ä¸‹å‡é€Ÿç²’å­
-            if (m_Slowdown < 3.0f) {
+        case Qt::Key_Minus:                                 //- ºÅ°´ÏÂ¼õËÙÁ£×Ó
+            if (m_Slowdown < 3.0f)
+            {
                 m_Slowdown += 0.05f;
             }
             break;
-        }
-        case Qt::Key_PageUp: {                              //PageUpæŒ‰ä¸‹ä½¿ç²’å­é è¿‘å±å¹•
+        case Qt::Key_PageUp:                                //PageUp°´ÏÂÊ¹Á£×Ó¿¿½üÆÁÄ»
             m_Deep += 0.5f;
             break;
-        }
-        case Qt::Key_PageDown: {                            //PageDownæŒ‰ä¸‹ä½¿ç²’å­è¿œç¦»å±å¹•
+        case Qt::Key_PageDown:                              //PageDown°´ÏÂÊ¹Á£×ÓÔ¶ÀëÆÁÄ»
             m_Deep -= 0.5f;
             break;
-        }
-        case Qt::Key_Return: {                              //å›è½¦é”®ä¸ºæ˜¯å¦å½©è™¹æ¨¡å¼çš„åˆ‡æ¢é”®
+        case Qt::Key_Return:                                //»Ø³µ¼üÎªÊÇ·ñ²ÊºçÄ£Ê½µÄÇĞ»»¼ü
             m_Rainbow = !m_Rainbow;
             break;
-        }
-        case Qt::Key_Space: {                               //ç©ºæ ¼é”®ä¸ºé¢œè‰²åˆ‡æ¢é”®
+        case Qt::Key_Space:                                 //¿Õ¸ñ¼üÎªÑÕÉ«ÇĞ»»¼ü
             m_Rainbow = false;
             m_Color++;
-            if (m_Color > 11) {
+            if (m_Color > 11)
+            {
                 m_Color = 0;
             }
             break;
-        }
-        case Qt::Key_Up: {                                  //UpæŒ‰ä¸‹å¢åŠ ç²’å­yè½´æ­£æ–¹å‘çš„é€Ÿåº¦
-            if (m_ySpeed < 400.0f) {
+        case Qt::Key_Up:                                    //Up°´ÏÂÔö¼ÓÁ£×ÓyÖáÕı·½ÏòµÄËÙ¶È
+            if (m_ySpeed < 400.0f)
+            {
                 m_ySpeed += 5.0f;
             }
             break;
-        }
-        case Qt::Key_Down: {                                //DownæŒ‰ä¸‹å‡å°‘ç²’å­yè½´æ­£æ–¹å‘çš„é€Ÿåº¦
+        case Qt::Key_Down:                                  //Down°´ÏÂ¼õÉÙÁ£×ÓyÖáÕı·½ÏòµÄËÙ¶È
             if (m_ySpeed > -400.0f)
             {
                 m_ySpeed -= 5.0f;
             }
             break;
-        }
-        case Qt::Key_Right: {                               //RightæŒ‰ä¸‹å¢åŠ ç²’å­xè½´æ­£æ–¹å‘çš„é€Ÿåº¦
-            if (m_xSpeed < 400.0f) {
+        case Qt::Key_Right:                                 //Right°´ÏÂÔö¼ÓÁ£×ÓxÖáÕı·½ÏòµÄËÙ¶È
+            if (m_xSpeed < 400.0f)
+            {
                 m_xSpeed += 5.0f;
             }
             break;
-        }
-        case Qt::Key_Left: {                                //LeftæŒ‰ä¸‹å‡å°‘ç²’å­xè½´æ­£æ–¹å‘çš„é€Ÿåº¦
-            if (m_xSpeed > -400.0f) {
+        case Qt::Key_Left:                                  //Left°´ÏÂ¼õÉÙÁ£×ÓxÖáÕı·½ÏòµÄËÙ¶È
+            if (m_xSpeed > -400.0f)
+            {
                 m_xSpeed -= 5.0f;
             }
             break;
-        }
+
     }
 }
