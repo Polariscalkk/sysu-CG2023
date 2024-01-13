@@ -24,6 +24,7 @@ const GLfloat MyGLWidget::COLORS[][3] =                 //彩虹的颜色
      {0.75f, 0.5f, 1.0f}, { 1.0f, 0.5f, 1.0f }, { 1.0f, 0.5f, 0.75f }
 };
 
+
 MyGLWidget::MyGLWidget(QWidget* parent) :
      QGLWidget(parent)
 {
@@ -36,9 +37,32 @@ MyGLWidget::MyGLWidget(QWidget* parent) :
     m_ySpeed = 0.0f;
     m_Deep = -40.0f;
 
-    for (int i = 0; i < MAX_PARTICLES; i++)                 //循环初始化所以粒子
+    m_Particles[MAX_PARTICLES].active = true;                   //使源粒子为激活状态
+    m_Particles[MAX_PARTICLES].life = 1.0f;                     //源粒子生命值为最大
+    //随机生成衰减速率
+    m_Particles[MAX_PARTICLES].fade = float(rand() % 100) / 1000.0f + 0.001;
+    //粒子的颜色
+    m_Particles[MAX_PARTICLES].r = COLORS[int(MAX_PARTICLES * (12.0f / MAX_PARTICLES))][0];
+    m_Particles[MAX_PARTICLES].g = COLORS[int(MAX_PARTICLES * (12.0f / MAX_PARTICLES))][1];
+    m_Particles[MAX_PARTICLES].b = COLORS[int(MAX_PARTICLES * (12.0f / MAX_PARTICLES))][2];
+
+    //粒子的初始位置
+    m_Particles[MAX_PARTICLES].x = 0.0f;
+    m_Particles[MAX_PARTICLES].y = -20.0f;  //从底部向上喷出
+    m_Particles[MAX_PARTICLES].z = 0.0f;
+
+    //随机生成x、y、z轴方向速度
+    m_Particles[MAX_PARTICLES].xi = float((rand() % 50) - 26.0f) * 2.0f;
+    m_Particles[MAX_PARTICLES].yi = float((rand() % 50) + 25.0f) * 10.0f;
+    m_Particles[MAX_PARTICLES].zi = float((rand() % 50) - 25.0f) * 2.0f;
+
+    m_Particles[MAX_PARTICLES].xg = 0.0f;                       //设置x方向加速度为0
+    m_Particles[MAX_PARTICLES].yg = -0.8f;                      //设置y方向加速度为-0.8
+    m_Particles[MAX_PARTICLES].zg = 0.0f;                       //设置z方向加速度为0
+
+    for (int i = 0; i < MAX_PARTICLES; i++)                 //循环初始化所有粒子
     {
-        m_Particles[i].active = true;                   //使所有粒子为激活状态
+        m_Particles[i].active = false;                   //使所有粒子为非激活状态
         m_Particles[i].life = 1.0f;                     //所有粒子生命值为最大
         //随机生成衰减速率
         m_Particles[i].fade = float(rand() % 100) / 1000.0f + 0.001;
@@ -46,19 +70,10 @@ MyGLWidget::MyGLWidget(QWidget* parent) :
         m_Particles[i].r = COLORS[int(i * (12.0f / MAX_PARTICLES))][0];
         m_Particles[i].g = COLORS[int(i * (12.0f / MAX_PARTICLES))][1];
         m_Particles[i].b = COLORS[int(i * (12.0f / MAX_PARTICLES))][2];
-         //粒子的初始位置
-        m_Particles[i].x = 0.0f;
-        m_Particles[i].y = 0.0f;
-        m_Particles[i].z = 0.0f;
 
-        //随机生成x、y、z轴方向速度
-        m_Particles[i].xi = float((rand() % 50) - 26.0f) * 10.0f;
-        m_Particles[i].yi = float((rand() % 50) - 25.0f) * 10.0f;
-        m_Particles[i].zi = float((rand() % 50) - 25.0f) * 10.0f;
-
-        m_Particles[i].xg = 0.0f;                       //设置x方向加速度为0
-        m_Particles[i].yg = -0.8f;                      //设置y方向加速度为-0.8
-        m_Particles[i].zg = 0.0f;                       //设置z方向加速度为0
+        m_Particles[i].xg = -0.1f;                       //设置x方向加速度为-0.1
+        m_Particles[i].yg = -0.1f;                      //设置y方向加速度为-0.1
+        m_Particles[i].zg = -0.1f;                       //设置z方向加速度为-0.1
     }
 
     QTimer * timer = new QTimer(this);                   //创建一个定时器
@@ -67,7 +82,7 @@ MyGLWidget::MyGLWidget(QWidget* parent) :
     timer->start(10);                                   //以10ms为一个计时周期
 }
 
-void MyGLWidget::initializeGL()                         //此处开始对OpenGL进行所以设置
+void MyGLWidget::initializeGL()
 {
     m_Texture = bindTexture(QPixmap(m_FileName));       //载入位图并转换成纹理
     glEnable(GL_TEXTURE_2D);                            //启用纹理映射
@@ -82,55 +97,97 @@ void MyGLWidget::initializeGL()                         //此处开始对OpenGL进行所
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
 }
 
-void MyGLWidget::paintGL()                              //从这里开始进行所以的绘制
+void MyGLWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //清除屏幕和深度缓存
     glLoadIdentity();                                   //重置模型观察矩阵
     glBindTexture(GL_TEXTURE_2D, m_Texture);
 
-    for (int i = 0; i < MAX_PARTICLES; i++)                 //循环所有的粒子
+    if (m_Particles[MAX_PARTICLES].active)                      //如果粒子为激活的
     {
-        if (m_Particles[i].active)                      //如果粒子为激活的
+        //更新各方向坐标及速度
+        m_Particles[MAX_PARTICLES].x += m_Particles[MAX_PARTICLES].xi / (m_Slowdown * 1000);
+        m_Particles[MAX_PARTICLES].y += m_Particles[MAX_PARTICLES].yi / (m_Slowdown * 1000);
+        m_Particles[MAX_PARTICLES].z += m_Particles[MAX_PARTICLES].zi / (m_Slowdown * 1000);
+
+        float x = m_Particles[MAX_PARTICLES].x;
+        float y = m_Particles[MAX_PARTICLES].y;
+        float z = m_Particles[MAX_PARTICLES].z + m_Deep;
+
+        // 设置粒子颜色
+        glColor4f(m_Particles[MAX_PARTICLES].r, m_Particles[MAX_PARTICLES].g, m_Particles[MAX_PARTICLES].b, m_Particles[MAX_PARTICLES].life);
+
+        glBegin(GL_TRIANGLE_STRIP); // 绘制三角形带
+        glTexCoord2d(1, 1); glVertex3f(x + 0.5f, y + 0.5f, z);
+        glTexCoord2d(0, 1); glVertex3f(x - 0.5f, y + 0.5f, z);
+        glTexCoord2d(1, 0); glVertex3f(x + 0.5f, y - 0.5f, z);
+        glTexCoord2d(0, 0); glVertex3f(x - 0.5f, y - 0.5f, z);
+        glEnd();
+
+        // 粒子爆炸的判断和处理
+        if (m_Particles[MAX_PARTICLES].y > 10.0f) // 爆炸条件，当粒子达到某个高度
         {
-            float x = m_Particles[i].x;                 //x轴位置
-            float y = m_Particles[i].y;                 //y轴位置
-            float z = m_Particles[i].z + m_Deep;        //z轴位置
-            //设置粒子颜色
-            glColor4f(m_Particles[i].r, m_Particles[i].g,
-                      m_Particles[i].b, m_Particles[i].life);
-            glBegin(GL_TRIANGLE_STRIP);                 //绘制三角形带
+            m_Particles[MAX_PARTICLES].xi = 0.0f;
+            m_Particles[MAX_PARTICLES].yi = 0.0f;
+            m_Particles[MAX_PARTICLES].zi = 0.0f;
+
+            float n_x = m_Particles[MAX_PARTICLES].x;
+            float n_y = m_Particles[MAX_PARTICLES].y;
+            float n_z = m_Particles[MAX_PARTICLES].z;
+
+            m_Particles[MAX_PARTICLES].life -= m_Particles[MAX_PARTICLES].fade; //减少粒子的生命值
+            /*if (m_Particles[MAX_PARTICLES].life < 0.0f) {
+                m_Particles[MAX_PARTICLES].active = false;
+            }*/
+
+            for (int i = 0; i < MAX_PARTICLES; i++)                 //循环所有的粒子
+            {
+                if (!m_Particles[i].active)                      //如果粒子为非激活的
+                {
+                    m_Particles[i].active = true;
+                    m_Particles[i].life = 1.0f;
+
+                    //粒子的初始位置
+                    m_Particles[i].x = n_x;
+                    m_Particles[i].y = n_y;
+                    m_Particles[i].z = n_z;
+
+                    //随机生成x、y、z轴方向速度
+                    m_Particles[i].xi = float((rand() % 50) - 26.0f) * 10.0f;
+                    m_Particles[i].yi = float((rand() % 50) - 25.0f) * 10.0f;
+                    m_Particles[i].zi = float((rand() % 50) - 25.0f) * 10.0f;
+                }
+            }
+
+        }
+
+        for (int i = 0; i < MAX_PARTICLES; i++)                 //循环所有的粒子
+        {
+            if (m_Particles[i].active)                      //如果粒子为激活的
+            {
+                //更新各方向坐标及速度
+                m_Particles[i].x += m_Particles[i].xi / (m_Slowdown * 1000);
+                m_Particles[i].y += m_Particles[i].yi / (m_Slowdown * 1000);
+                m_Particles[i].z += m_Particles[i].zi / (m_Slowdown * 1000);
+
+                float x = m_Particles[i].x;
+                float y = m_Particles[i].y;
+                float z = m_Particles[i].z + m_Deep;
+
+                // 设置粒子颜色
+                glColor4f(m_Particles[i].r, m_Particles[i].g, m_Particles[i].b, m_Particles[i].life);
+
+                glBegin(GL_TRIANGLE_STRIP); // 绘制三角形带
                 glTexCoord2d(1, 1); glVertex3f(x + 0.5f, y + 0.5f, z);
                 glTexCoord2d(0, 1); glVertex3f(x - 0.5f, y + 0.5f, z);
                 glTexCoord2d(1, 0); glVertex3f(x + 0.5f, y - 0.5f, z);
                 glTexCoord2d(0, 0); glVertex3f(x - 0.5f, y - 0.5f, z);
-            glEnd();
+                glEnd();
 
-            //更新各方向坐标及速度
-            m_Particles[i].x += m_Particles[i].xi / (m_Slowdown * 1000);
-            m_Particles[i].y += m_Particles[i].yi / (m_Slowdown * 1000);
-            m_Particles[i].z += m_Particles[i].zi / (m_Slowdown * 1000);
-            m_Particles[i].xi += m_Particles[i].xg;
-            m_Particles[i].yi += m_Particles[i].yg;
-            m_Particles[i].zi += m_Particles[i].zg;
-
-            m_Particles[i].life -= m_Particles[i].fade; //减少粒子的生命值
-            if (m_Particles[i].life < 0.0f)             //如果粒子生命值小于0
-            {
-                m_Particles[i].life = 1.0f;             //产生一个新粒子
-                m_Particles[i].fade = float(rand() % 100) / 1000.0f + 0.003f;
-
-                m_Particles[i].r = COLORS[m_Color][0];  //设置颜色
-                m_Particles[i].g = COLORS[m_Color][1];
-                m_Particles[i].b = COLORS[m_Color][2];
-
-                m_Particles[i].x = 0.0f;                //粒子出现在屏幕中央
-                m_Particles[i].y = 0.0f;
-                m_Particles[i].z = 0.0f;
-
-                //随机生成粒子速度
-                m_Particles[i].xi = m_xSpeed + float((rand() % 60) - 32.0f);
-                m_Particles[i].yi = m_ySpeed + float((rand() % 60) - 30.0f);
-                m_Particles[i].zi = float((rand() % 60) - 30.0f);
+                m_Particles[i].life -= m_Particles[i].fade; //减少粒子的生命值
+                if (m_Particles[i].life < 0.0f) {
+                    m_Particles[i].active = false;
+                }
             }
         }
     }
@@ -138,8 +195,7 @@ void MyGLWidget::paintGL()                              //从这里开始进行所以的绘
     if (m_Rainbow)                                      //如果为彩虹模式
     {
         m_Color++;                                      //进行颜色的变换
-        if (m_Color > 11)
-        {
+        if (m_Color > 11) {
             m_Color = 0;
         }
     }
@@ -166,7 +222,7 @@ void MyGLWidget::keyPressEvent(QKeyEvent* e)
             for (int i = 0; i < MAX_PARTICLES; i++)
             {
                 m_Particles[i].x = 0.0f;
-                m_Particles[i].y = 0.0f;
+                m_Particles[i].y = -10.0f;
                 m_Particles[i].z = 0.0f;
 
                 //随机生成速度
@@ -175,54 +231,7 @@ void MyGLWidget::keyPressEvent(QKeyEvent* e)
                 m_Particles[i].zi = float((rand() % 50) - 25.0f) * 10.0f;
             }
             break;
-        case Qt::Key_8:                                     //按下8增加y方向加速度
-            for (int i = 0; i < MAX_PARTICLES; i++)
-            {
-                if (m_Particles[i].yg < 3.0f)
-                {
-                    m_Particles[i].yg += 0.05f;
-                }
-            }
-            break;
-        case Qt::Key_2:                                     //按下2减少y方向加速度
-            for (int i = 0; i < MAX_PARTICLES; i++)
-            {
-                if (m_Particles[i].yg > -3.0f)
-                {
-                    m_Particles[i].yg -= 0.05f;
-                }
-            }
-            break;
-        case Qt::Key_6:                                     //按下6增加x方向加速度
-            for (int i = 0; i < MAX_PARTICLES; i++)
-            {
-                if (m_Particles[i].xg < 3.0f)
-                {
-                    m_Particles[i].xg += 0.05f;
-                }
-            }
-            break;
-        case Qt::Key_4:                                     //按下4减少x方向加速度
-            for (int i = 0; i < MAX_PARTICLES; i++)
-            {
-                if (m_Particles[i].xg > -3.0f)
-                {
-                    m_Particles[i].xg -= 0.05f;
-                }
-            }
-            break;
-        case Qt::Key_Plus:                                  //+ 号按下加速粒子
-            if (m_Slowdown > 1.0f)
-            {
-                m_Slowdown -= 0.05f;
-            }
-            break;
-        case Qt::Key_Minus:                                 //- 号按下减速粒子
-            if (m_Slowdown < 3.0f)
-            {
-                m_Slowdown += 0.05f;
-            }
-            break;
+        
         case Qt::Key_PageUp:                                //PageUp按下使粒子靠近屏幕
             m_Deep += 0.5f;
             break;
