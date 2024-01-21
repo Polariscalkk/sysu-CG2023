@@ -26,7 +26,7 @@ protected:
     void initializeGL();
     void resizeGL(int w, int h);
     void paintGL();
-    void keyPressEvent(QKeyEvent * event);           //处理键盘按下事件
+    void keyPressEvent(QKeyEvent * e);              //处理键盘按下事件
 
 private:
     bool fullscreen;                                //是否全屏显示
@@ -53,7 +53,7 @@ private:
         float x, y, z;                              //位置坐标
         float xi, yi, zi;                           //各方向速度
         float xg, yg, zg;                           //各方向加速度
-    } m_Particles[MAX_PARTICLES+1];                   //存放1001个粒子的数组,最后一个粒子设置为触发器粒子
+    } m_Particles[MAX_PARTICLES+1];                 //存放1001个粒子的数组,最后一个粒子设置为触发器粒子
 };
 
 #endif // MYGLWIDGET_H
