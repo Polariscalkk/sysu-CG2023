@@ -1,11 +1,11 @@
-#include "myglwidget.h"
+ï»¿#include "myglwidget.h"
 
 MyGLWidget::~MyGLWidget()
 {
 
 }
 
-// ´¦Àí´°¿Ú´óĞ¡±ä»¯
+// å¤„ç†çª—å£å¤§å°å˜åŒ–
 void MyGLWidget::resizeGL(int w, int h) {
     if (h == 0) h = 1;
     glViewport(0, 0, w, h);
@@ -16,7 +16,7 @@ void MyGLWidget::resizeGL(int w, int h) {
     glLoadIdentity();
 }
 
-const GLfloat MyGLWidget::COLORS[][3] =  //ÑÌ»¨Á£×ÓÑÕÉ«
+const GLfloat MyGLWidget::COLORS[][3] =  //çƒŸèŠ±ç²’å­é¢œè‰²
 {
      {1.0f, 0.5f, 0.5f}, { 1.0f, 0.75f, 0.5f }, { 1.0f, 1.0f, 0.5f },
      {0.75f, 1.0f, 0.5f}, { 0.5f, 1.0f, 0.5f }, { 0.5f, 1.0f, 0.75f },
@@ -28,7 +28,7 @@ const GLfloat MyGLWidget::COLORS[][3] =  //ÑÌ»¨Á£×ÓÑÕÉ«
 MyGLWidget::MyGLWidget(QWidget* parent) :
      QGLWidget(parent)
 {
-    m_FileName = "E:/fireworkPicture.png"; //ÑÌ»¨Á£×ÓÎÆÀí
+    m_FileName = "E:/fireworkPicture.png"; //çƒŸèŠ±ç²’å­çº¹ç†
     m_Rainbow = false;
     m_Color = 0;
     m_Slowdown = 2.0f;
@@ -36,79 +36,79 @@ MyGLWidget::MyGLWidget(QWidget* parent) :
     m_ySpeed = 0.0f;
     m_Deep = -40.0f;
 
-    m_Particles[MAX_PARTICLES].active = true; //Ê¹´¥·¢Æ÷Á£×ÓÎª¼¤»î×´Ì¬
-    m_Particles[MAX_PARTICLES].life = 1.0f; //´¥·¢Æ÷Á£×ÓÉúÃüÖµÎª×î´ó
-    m_Particles[MAX_PARTICLES].fade = float(rand() % 100) / 1000.0f + 0.001; //Ëæ»úÉú³É´¥·¢Æ÷Á£×ÓµÄË¥¼õËÙÂÊ
+    m_Particles[MAX_PARTICLES].active = true; //ä½¿è§¦å‘å™¨ç²’å­ä¸ºæ¿€æ´»çŠ¶æ€
+    m_Particles[MAX_PARTICLES].life = 1.0f; //è§¦å‘å™¨ç²’å­ç”Ÿå‘½å€¼ä¸ºæœ€å¤§
+    m_Particles[MAX_PARTICLES].fade = float(rand() % 100) / 1000.0f + 0.001; //éšæœºç”Ÿæˆè§¦å‘å™¨ç²’å­çš„è¡°å‡é€Ÿç‡
 
-    //Ëæ»úÉú³É´¥·¢Æ÷Á£×ÓµÄÑÕÉ«
+    //éšæœºç”Ÿæˆè§¦å‘å™¨ç²’å­çš„é¢œè‰²
     m_Particles[MAX_PARTICLES].r = COLORS[m_Rainbow ? rand() % 12 : m_Color][0];
     m_Particles[MAX_PARTICLES].g = COLORS[m_Rainbow ? rand() % 12 : m_Color][1];
     m_Particles[MAX_PARTICLES].b = COLORS[m_Rainbow ? rand() % 12 : m_Color][2];
 
-    //´¥·¢Æ÷Á£×ÓµÄ³õÊ¼Î»ÖÃ
+    //è§¦å‘å™¨ç²’å­çš„åˆå§‹ä½ç½®
     m_Particles[MAX_PARTICLES].x = 0.0f;
-    m_Particles[MAX_PARTICLES].y = -20.0f; //´Óµ×²¿ÏòÉÏÅç³ö
+    m_Particles[MAX_PARTICLES].y = -20.0f; //ä»åº•éƒ¨å‘ä¸Šå–·å‡º
     m_Particles[MAX_PARTICLES].z = 0.0f;
 
-    //Ëæ»úÉú³É´¥·¢Æ÷Á£×ÓÔÚx¡¢y¡¢zÖá·½ÏòÉÏµÄËÙ¶È
+    //éšæœºç”Ÿæˆè§¦å‘å™¨ç²’å­åœ¨xã€yã€zè½´æ–¹å‘ä¸Šçš„é€Ÿåº¦
     m_Particles[MAX_PARTICLES].xi = float((rand() % 50) - 26.0f) * 2.0f;
     m_Particles[MAX_PARTICLES].yi = float((rand() % 50) + 25.0f) * 10.0f;
     m_Particles[MAX_PARTICLES].zi = float((rand() % 50) - 25.0f) * 2.0f;
 
-    //ÉèÖÃ´¥·¢Æ÷Á£×ÓÔÚx¡¢y¡¢zÖá·½ÏòÉÏµÄ¼ÓËÙ¶È
+    //è®¾ç½®è§¦å‘å™¨ç²’å­åœ¨xã€yã€zè½´æ–¹å‘ä¸Šçš„åŠ é€Ÿåº¦
     m_Particles[MAX_PARTICLES].xg = 0.0f;
     m_Particles[MAX_PARTICLES].yg = -0.8f;
     m_Particles[MAX_PARTICLES].zg = 0.0f;
 
-    for (int i = 0; i < MAX_PARTICLES; i++) //Ñ­»·³õÊ¼»¯ËùÓĞÁ£×Ó
+    for (int i = 0; i < MAX_PARTICLES; i++) //å¾ªç¯åˆå§‹åŒ–æ‰€æœ‰ç²’å­
     {
-        m_Particles[i].active = false; //Ê¹ËùÓĞÁ£×ÓÎª·Ç¼¤»î×´Ì¬
-        m_Particles[i].life = 1.0f; //ËùÓĞÁ£×ÓÉúÃüÖµÎª×î´ó
-        m_Particles[i].fade = float(rand() % 100) / 1000.0f + 0.001; //Ëæ»úÉú³ÉË¥¼õËÙÂÊ
+        m_Particles[i].active = false; //ä½¿æ‰€æœ‰ç²’å­ä¸ºéæ¿€æ´»çŠ¶æ€
+        m_Particles[i].life = 1.0f; //æ‰€æœ‰ç²’å­ç”Ÿå‘½å€¼ä¸ºæœ€å¤§
+        m_Particles[i].fade = float(rand() % 100) / 1000.0f + 0.001; //éšæœºç”Ÿæˆè¡°å‡é€Ÿç‡
 
-        //Á£×ÓµÄÑÕÉ«
+        //ç²’å­çš„é¢œè‰²
         m_Particles[i].r = COLORS[m_Rainbow ? rand() % 12 : m_Color][0];
         m_Particles[i].g = COLORS[m_Rainbow ? rand() % 12 : m_Color][1];
         m_Particles[i].b = COLORS[m_Rainbow ? rand() % 12 : m_Color][2];
 
-        //Á£×ÓÔÚÃ¿¸ö·½ÏòÉÏµÄ¼ÓËÙ¶È
+        //ç²’å­åœ¨æ¯ä¸ªæ–¹å‘ä¸Šçš„åŠ é€Ÿåº¦
         m_Particles[i].xg = -0.1f;
         m_Particles[i].yg = -0.1f;
         m_Particles[i].zg = -0.1f;
     }
 
-    //´´½¨Ò»¸ö¶¨Ê±Æ÷
+    //åˆ›å»ºä¸€ä¸ªå®šæ—¶å™¨
     QTimer * timer = new QTimer(this);
-    //½«¶¨Ê±Æ÷µÄ¼ÆÊ±ĞÅºÅÓëupdateGL()°ó¶¨
+    //å°†å®šæ—¶å™¨çš„è®¡æ—¶ä¿¡å·ä¸updateGL()ç»‘å®š
     connect(timer, SIGNAL(timeout()), this, SLOT(updateGL()));
-    //ÒÔ10msÎªÒ»¸ö¼ÆÊ±ÖÜÆÚ
+    //ä»¥10msä¸ºä¸€ä¸ªè®¡æ—¶å‘¨æœŸ
     timer->start(10);
 }
 
 void MyGLWidget::initializeGL()
 {
-    m_Texture = bindTexture(QPixmap(m_FileName));       //ÔØÈëÎ»Í¼²¢×ª»»³ÉÎÆÀí
-    glEnable(GL_TEXTURE_2D);                            //ÆôÓÃÎÆÀíÓ³Éä
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);               //ºÚÉ«±³¾°
-    glShadeModel(GL_SMOOTH);                            //ÆôÓÃÒõÓ°Æ½»¬
-    glClearDepth(1.0);                                  //ÉèÖÃÉî¶È»º´æ
-    glDisable(GL_DEPTH_TEST);                           //½ûÖ¹Éî¶È²âÊÔ
-    glEnable(GL_BLEND);                                 //ÆôÓÃÈÚºÏ
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);                  //ÉèÖÃÈÚºÏÒò×Ó
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  //¸æËßÏµÍ³¶ÔÍ¸ÊÓ½øĞĞĞŞÕı
+    m_Texture = bindTexture(QPixmap(m_FileName));       //è½½å…¥ä½å›¾å¹¶è½¬æ¢æˆçº¹ç†
+    glEnable(GL_TEXTURE_2D);                            //å¯ç”¨çº¹ç†æ˜ å°„
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);               //é»‘è‰²èƒŒæ™¯
+    glShadeModel(GL_SMOOTH);                            //å¯ç”¨é˜´å½±å¹³æ»‘
+    glClearDepth(1.0);                                  //è®¾ç½®æ·±åº¦ç¼“å­˜
+    glDisable(GL_DEPTH_TEST);                           //ç¦æ­¢æ·±åº¦æµ‹è¯•
+    glEnable(GL_BLEND);                                 //å¯ç”¨èåˆ
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);                  //è®¾ç½®èåˆå› å­
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  //å‘Šè¯‰ç³»ç»Ÿå¯¹é€è§†è¿›è¡Œä¿®æ­£
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
 }
 
 void MyGLWidget::paintGL()
 {
     showFullScreen();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Çå³ıÆÁÄ»ºÍÉî¶È»º´æ
-    glLoadIdentity(); //ÖØÖÃÄ£ĞÍ¹Û²ì¾ØÕó
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //æ¸…é™¤å±å¹•å’Œæ·±åº¦ç¼“å­˜
+    glLoadIdentity(); //é‡ç½®æ¨¡å‹è§‚å¯ŸçŸ©é˜µ
     glBindTexture(GL_TEXTURE_2D, m_Texture);
 
-    if (m_Particles[MAX_PARTICLES].active) //Èç¹ûÁ£×ÓÎª¼¤»îµÄ
+    if (m_Particles[MAX_PARTICLES].active) //å¦‚æœç²’å­ä¸ºæ¿€æ´»çš„
     {
-        //¸üĞÂ¸÷·½Ïò×ø±ê¼°ËÙ¶È
+        //æ›´æ–°å„æ–¹å‘åæ ‡åŠé€Ÿåº¦
         m_Particles[MAX_PARTICLES].x += m_Particles[MAX_PARTICLES].xi / (m_Slowdown * 1000);
         m_Particles[MAX_PARTICLES].y += m_Particles[MAX_PARTICLES].yi / (m_Slowdown * 1000);
         m_Particles[MAX_PARTICLES].z += m_Particles[MAX_PARTICLES].zi / (m_Slowdown * 1000);
@@ -117,18 +117,18 @@ void MyGLWidget::paintGL()
         float y = m_Particles[MAX_PARTICLES].y;
         float z = m_Particles[MAX_PARTICLES].z + m_Deep;
 
-        // ÉèÖÃÁ£×ÓÑÕÉ«
+        // è®¾ç½®ç²’å­é¢œè‰²
         glColor4f(m_Particles[MAX_PARTICLES].r, m_Particles[MAX_PARTICLES].g, m_Particles[MAX_PARTICLES].b, m_Particles[MAX_PARTICLES].life);
 
-        glBegin(GL_TRIANGLE_STRIP); // »æÖÆÈı½ÇĞÎ´ø
+        glBegin(GL_TRIANGLE_STRIP); // ç»˜åˆ¶ä¸‰è§’å½¢å¸¦
         glTexCoord2d(1, 1); glVertex3f(x + 0.5f, y + 0.5f, z);
         glTexCoord2d(0, 1); glVertex3f(x - 0.5f, y + 0.5f, z);
         glTexCoord2d(1, 0); glVertex3f(x + 0.5f, y - 0.5f, z);
         glTexCoord2d(0, 0); glVertex3f(x - 0.5f, y - 0.5f, z);
         glEnd();
 
-        // Á£×Ó±¬Õ¨µÄÅĞ¶ÏºÍ´¦Àí
-        if (m_Particles[MAX_PARTICLES].y > 10.0f && m_Particles[MAX_PARTICLES].life > 0) // ±¬Õ¨Ìõ¼ş£¬µ±Á£×Ó´ïµ½Ä³¸ö¸ß¶È
+        // ç²’å­çˆ†ç‚¸çš„åˆ¤æ–­å’Œå¤„ç†
+        if (m_Particles[MAX_PARTICLES].y > 10.0f && m_Particles[MAX_PARTICLES].life > 0) // çˆ†ç‚¸æ¡ä»¶ï¼Œå½“ç²’å­è¾¾åˆ°æŸä¸ªé«˜åº¦
         {
             m_Particles[MAX_PARTICLES].xi = 0.0f;
             m_Particles[MAX_PARTICLES].yi = 0.0f;
@@ -138,27 +138,27 @@ void MyGLWidget::paintGL()
             float n_y = m_Particles[MAX_PARTICLES].y;
             float n_z = m_Particles[MAX_PARTICLES].z;
 
-            //¼õÉÙÁ£×ÓµÄÉúÃüÖµ
+            //å‡å°‘ç²’å­çš„ç”Ÿå‘½å€¼
             m_Particles[MAX_PARTICLES].life -= m_Particles[MAX_PARTICLES].fade;
 
-            for (int i = 0; i < MAX_PARTICLES; i++)  //Ñ­»·ËùÓĞµÄÁ£×Ó
+            for (int i = 0; i < MAX_PARTICLES; i++)  //å¾ªç¯æ‰€æœ‰çš„ç²’å­
             {
-                if (!m_Particles[i].active) //Èç¹ûÁ£×ÓÎª·Ç¼¤»îµÄ
+                if (!m_Particles[i].active) //å¦‚æœç²’å­ä¸ºéæ¿€æ´»çš„
                 {
                     m_Particles[i].active = true;
                     m_Particles[i].life = 1.0f;
 
-                    //Á£×ÓµÄ³õÊ¼Î»ÖÃ
+                    //ç²’å­çš„åˆå§‹ä½ç½®
                     m_Particles[i].x = n_x;
                     m_Particles[i].y = n_y;
                     m_Particles[i].z = n_z;
 
-                    //Á£×ÓµÄÑÕÉ«
+                    //ç²’å­çš„é¢œè‰²
                     m_Particles[i].r = COLORS[m_Rainbow ? rand() % 12 : m_Color][0];
                     m_Particles[i].g = COLORS[m_Rainbow ? rand() % 12 : m_Color][1];
                     m_Particles[i].b = COLORS[m_Rainbow ? rand() % 12 : m_Color][2];
 
-                    //Ëæ»úÉú³Éx¡¢y¡¢zÖá·½ÏòËÙ¶È
+                    //éšæœºç”Ÿæˆxã€yã€zè½´æ–¹å‘é€Ÿåº¦
                     m_Particles[i].xi = float((rand() % 50) - 26.0f) * 10.0f;
                     m_Particles[i].yi = float((rand() % 50) - 25.0f) * 10.0f;
                     m_Particles[i].zi = float((rand() % 50) - 25.0f) * 10.0f;
@@ -166,38 +166,38 @@ void MyGLWidget::paintGL()
             }
 
         }
-        else if (m_Particles[MAX_PARTICLES].y > 10.0f && m_Particles[MAX_PARTICLES].life <= 0) // ÖØ¸´Ìõ¼ş£¬µ±Á£×Ó´ïµ½Ä³¸ö¸ß¶È£¬²¢ÇÒ²»ÔÙÈ¼·Å
+        else if (m_Particles[MAX_PARTICLES].y > 10.0f && m_Particles[MAX_PARTICLES].life <= 0) // é‡å¤æ¡ä»¶ï¼Œå½“ç²’å­è¾¾åˆ°æŸä¸ªé«˜åº¦ï¼Œå¹¶ä¸”ä¸å†ç‡ƒæ”¾
         {
-            m_Particles[MAX_PARTICLES].active = true; //Ê¹´¥·¢Æ÷Á£×ÓÎª¼¤»î×´Ì¬
-            m_Particles[MAX_PARTICLES].life = 1.0f; //´¥·¢Æ÷Á£×ÓÉúÃüÖµÎª×î´ó
-            m_Particles[MAX_PARTICLES].fade = float(rand() % 100) / 1000.0f + 0.001; //Ëæ»úÉú³É´¥·¢Æ÷Á£×ÓµÄË¥¼õËÙÂÊ
+            m_Particles[MAX_PARTICLES].active = true; //ä½¿è§¦å‘å™¨ç²’å­ä¸ºæ¿€æ´»çŠ¶æ€
+            m_Particles[MAX_PARTICLES].life = 1.0f; //è§¦å‘å™¨ç²’å­ç”Ÿå‘½å€¼ä¸ºæœ€å¤§
+            m_Particles[MAX_PARTICLES].fade = float(rand() % 100) / 1000.0f + 0.001; //éšæœºç”Ÿæˆè§¦å‘å™¨ç²’å­çš„è¡°å‡é€Ÿç‡
 
-            //Ëæ»úÉú³É´¥·¢Æ÷Á£×ÓµÄÑÕÉ«
+            //éšæœºç”Ÿæˆè§¦å‘å™¨ç²’å­çš„é¢œè‰²
             m_Particles[MAX_PARTICLES].r = COLORS[m_Rainbow ? rand() % 12 : m_Color][0];
             m_Particles[MAX_PARTICLES].g = COLORS[m_Rainbow ? rand() % 12 : m_Color][1];
             m_Particles[MAX_PARTICLES].b = COLORS[m_Rainbow ? rand() % 12 : m_Color][2];
 
-            //´¥·¢Æ÷Á£×ÓµÄ³õÊ¼Î»ÖÃ
+            //è§¦å‘å™¨ç²’å­çš„åˆå§‹ä½ç½®
             m_Particles[MAX_PARTICLES].x = 0.0f;
-            m_Particles[MAX_PARTICLES].y = -20.0f; //´Óµ×²¿ÏòÉÏÅç³ö
+            m_Particles[MAX_PARTICLES].y = -20.0f; //ä»åº•éƒ¨å‘ä¸Šå–·å‡º
             m_Particles[MAX_PARTICLES].z = 0.0f;
 
-            //Ëæ»úÉú³É´¥·¢Æ÷Á£×ÓÔÚx¡¢y¡¢zÖá·½ÏòÉÏµÄËÙ¶È
+            //éšæœºç”Ÿæˆè§¦å‘å™¨ç²’å­åœ¨xã€yã€zè½´æ–¹å‘ä¸Šçš„é€Ÿåº¦
             m_Particles[MAX_PARTICLES].xi = float((rand() % 50) - 26.0f) * 2.0f;
             m_Particles[MAX_PARTICLES].yi = float((rand() % 50) + 25.0f) * 10.0f;
             m_Particles[MAX_PARTICLES].zi = float((rand() % 50) - 25.0f) * 2.0f;
 
-            //ÉèÖÃ´¥·¢Æ÷Á£×ÓÔÚx¡¢y¡¢zÖá·½ÏòÉÏµÄ¼ÓËÙ¶È
+            //è®¾ç½®è§¦å‘å™¨ç²’å­åœ¨xã€yã€zè½´æ–¹å‘ä¸Šçš„åŠ é€Ÿåº¦
             m_Particles[MAX_PARTICLES].xg = 0.0f;
             m_Particles[MAX_PARTICLES].yg = -0.8f;
             m_Particles[MAX_PARTICLES].zg = 0.0f;
         }
 
-        for (int i = 0; i < MAX_PARTICLES; i++) //Ñ­»·ËùÓĞµÄÁ£×Ó
+        for (int i = 0; i < MAX_PARTICLES; i++) //å¾ªç¯æ‰€æœ‰çš„ç²’å­
         {
-            if (m_Particles[i].active) //Èç¹ûÁ£×ÓÎª¼¤»îµÄ
+            if (m_Particles[i].active) //å¦‚æœç²’å­ä¸ºæ¿€æ´»çš„
             {
-                //¸üĞÂ¸÷·½Ïò×ø±ê¼°ËÙ¶È
+                //æ›´æ–°å„æ–¹å‘åæ ‡åŠé€Ÿåº¦
                 m_Particles[i].x += m_Particles[i].xi / (m_Slowdown * 1000);
                 m_Particles[i].y += m_Particles[i].yi / (m_Slowdown * 1000);
                 m_Particles[i].z += m_Particles[i].zi / (m_Slowdown * 1000);
@@ -206,17 +206,17 @@ void MyGLWidget::paintGL()
                 float y = m_Particles[i].y;
                 float z = m_Particles[i].z + m_Deep;
 
-                // ÉèÖÃÁ£×ÓÑÕÉ«
+                // è®¾ç½®ç²’å­é¢œè‰²
                 glColor4f(m_Particles[i].r, m_Particles[i].g, m_Particles[i].b, m_Particles[i].life);
 
-                glBegin(GL_TRIANGLE_STRIP); // »æÖÆÈı½ÇĞÎ´ø
+                glBegin(GL_TRIANGLE_STRIP); // ç»˜åˆ¶ä¸‰è§’å½¢å¸¦
                 glTexCoord2d(1, 1); glVertex3f(x + 0.5f, y + 0.5f, z);
                 glTexCoord2d(0, 1); glVertex3f(x - 0.5f, y + 0.5f, z);
                 glTexCoord2d(1, 0); glVertex3f(x + 0.5f, y - 0.5f, z);
                 glTexCoord2d(0, 0); glVertex3f(x - 0.5f, y - 0.5f, z);
                 glEnd();
 
-                //¼õÉÙÁ£×ÓµÄÉúÃüÖµ
+                //å‡å°‘ç²’å­çš„ç”Ÿå‘½å€¼
                 m_Particles[i].life -= m_Particles[i].fade;
                 if (m_Particles[i].life < 0.0f) {
                     m_Particles[i].active = false;
@@ -230,19 +230,19 @@ void MyGLWidget::keyPressEvent(QKeyEvent* e)
 {
     switch (e->key())
     {
-        case Qt::Key_Escape:                                //ESCÎªÍË³ö¼ü
+        case Qt::Key_Escape:                                //ESCä¸ºé€€å‡ºé”®
             close();
             break;
-        case Qt::Key_PageUp:                                //PageUp°´ÏÂ¿¿½üÁ£×Ó
+        case Qt::Key_PageUp:                                //PageUpæŒ‰ä¸‹é è¿‘ç²’å­
             m_Deep += 0.5f;
             break;
-        case Qt::Key_PageDown:                              //PageDown°´ÏÂÔ¶ÀëÁ£×Ó
+        case Qt::Key_PageDown:                              //PageDownæŒ‰ä¸‹è¿œç¦»ç²’å­
             m_Deep -= 0.5f;
             break;
-        case Qt::Key_Return:                                //ÇĞ»»²ÊºçÄ£Ê½
+        case Qt::Key_Return:                                //åˆ‡æ¢å½©è™¹æ¨¡å¼
             m_Rainbow = !m_Rainbow;
             break;
-        case Qt::Key_Space:                                 //ÇĞ»»ÑÌ»¨Á£×ÓÑÕÉ«
+        case Qt::Key_Space:                                 //åˆ‡æ¢çƒŸèŠ±ç²’å­é¢œè‰²
             m_Rainbow = false;
             m_Color++;
             if (m_Color > 11)
@@ -250,25 +250,25 @@ void MyGLWidget::keyPressEvent(QKeyEvent* e)
                 m_Color = 0;
             }
             break;
-        case Qt::Key_Up:                                    //Ôö¼ÓÁ£×ÓyÖáÕı·½ÏòµÄËÙ¶È
+        case Qt::Key_Up:                                    //å¢åŠ ç²’å­yè½´æ­£æ–¹å‘çš„é€Ÿåº¦
             if (m_ySpeed < 400.0f)
             {
                 m_ySpeed += 5.0f;
             }
             break;
-        case Qt::Key_Down:                                  //¼õÉÙÁ£×ÓyÖáÕı·½ÏòµÄËÙ¶È
+        case Qt::Key_Down:                                  //å‡å°‘ç²’å­yè½´æ­£æ–¹å‘çš„é€Ÿåº¦
             if (m_ySpeed > -400.0f)
             {
                 m_ySpeed -= 5.0f;
             }
             break;
-        case Qt::Key_Right:                                 //Ôö¼ÓÁ£×ÓxÖáÕı·½ÏòµÄËÙ¶È
+        case Qt::Key_Right:                                 //å¢åŠ ç²’å­xè½´æ­£æ–¹å‘çš„é€Ÿåº¦
             if (m_xSpeed < 400.0f)
             {
                 m_xSpeed += 5.0f;
             }
             break;
-        case Qt::Key_Left:                                  //¼õÉÙÁ£×ÓxÖáÕı·½ÏòµÄËÙ¶È
+        case Qt::Key_Left:                                  //å‡å°‘ç²’å­xè½´æ­£æ–¹å‘çš„é€Ÿåº¦
             if (m_xSpeed > -400.0f)
             {
                 m_xSpeed -= 5.0f;

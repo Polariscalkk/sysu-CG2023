@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef MYGLWIDGET_H
 #define MYGLWIDGET_H
 
@@ -26,34 +26,34 @@ protected:
     void initializeGL();
     void resizeGL(int w, int h);
     void paintGL();
-    void keyPressEvent(QKeyEvent * e);              //´¦Àí¼üÅÌ°´ÏÂÊÂ¼ş
+    void keyPressEvent(QKeyEvent * e);              //å¤„ç†é”®ç›˜æŒ‰ä¸‹äº‹ä»¶
 
 private:
-    bool fullscreen;                                //ÊÇ·ñÈ«ÆÁÏÔÊ¾
-    QString m_FileName;                             //Í¼Æ¬µÄÂ·¾¶¼°ÎÄ¼şÃû
-    GLuint m_Texture;                               //´¢´æÒ»¸öÎÆÀí
+    bool fullscreen;                                //æ˜¯å¦å…¨å±æ˜¾ç¤º
+    QString m_FileName;                             //å›¾ç‰‡çš„è·¯å¾„åŠæ–‡ä»¶å
+    GLuint m_Texture;                               //å‚¨å­˜ä¸€ä¸ªçº¹ç†
 
-    static const int MAX_PARTICLES = 1000;          //×î´óÁ£×ÓÊı
-    static const GLfloat COLORS[12][3];             //²ÊºçµÄÑÕÉ«
-    bool m_Rainbow;                                 //ÊÇ·ñÎª²ÊºçÄ£Ê½
-    GLuint m_Color;                                 //µ±Ç°µÄÑÕÉ«
+    static const int MAX_PARTICLES = 1000;          //æœ€å¤§ç²’å­æ•°
+    static const GLfloat COLORS[12][3];             //å½©è™¹çš„é¢œè‰²
+    bool m_Rainbow;                                 //æ˜¯å¦ä¸ºå½©è™¹æ¨¡å¼
+    GLuint m_Color;                                 //å½“å‰çš„é¢œè‰²
 
-    float m_Slowdown;                               //¼õËÙÁ£×Ó
-    float m_xSpeed;                                 //x·½ÏòµÄËÙ¶È
-    float m_ySpeed;                                 //y·½ÏòµÄËÙ¶È
-    float m_Deep;                                   //ÒÆÈëÆÁÄ»µÄ¾àÀë
+    float m_Slowdown;                               //å‡é€Ÿç²’å­
+    float m_xSpeed;                                 //xæ–¹å‘çš„é€Ÿåº¦
+    float m_ySpeed;                                 //yæ–¹å‘çš„é€Ÿåº¦
+    float m_Deep;                                   //ç§»å…¥å±å¹•çš„è·ç¦»
 
-    struct Particle                                 //´´½¨Á£×Ó½á¹¹Ìå
+    struct Particle                                 //åˆ›å»ºç²’å­ç»“æ„ä½“
     {
-        bool active;                                //ÊÇ·ñ¼¤»î
-        float life;                                 //Á£×ÓÉúÃü
-        float fade;                                 //Ë¥¼õËÙ¶È
+        bool active;                                //æ˜¯å¦æ¿€æ´»
+        float life;                                 //ç²’å­ç”Ÿå‘½
+        float fade;                                 //è¡°å‡é€Ÿåº¦
 
-        float r, g, b;                              //Á£×ÓÑÕÉ«
-        float x, y, z;                              //Î»ÖÃ×ø±ê
-        float xi, yi, zi;                           //¸÷·½ÏòËÙ¶È
-        float xg, yg, zg;                           //¸÷·½Ïò¼ÓËÙ¶È
-    } m_Particles[MAX_PARTICLES+1];                 //´æ·Å1001¸öÁ£×ÓµÄÊı×é,×îºóÒ»¸öÁ£×ÓÉèÖÃÎª´¥·¢Æ÷Á£×Ó
+        float r, g, b;                              //ç²’å­é¢œè‰²
+        float x, y, z;                              //ä½ç½®åæ ‡
+        float xi, yi, zi;                           //å„æ–¹å‘é€Ÿåº¦
+        float xg, yg, zg;                           //å„æ–¹å‘åŠ é€Ÿåº¦
+    } m_Particles[MAX_PARTICLES+1];                 //å­˜æ”¾1001ä¸ªç²’å­çš„æ•°ç»„,æœ€åä¸€ä¸ªç²’å­è®¾ç½®ä¸ºè§¦å‘å™¨ç²’å­
 };
 
 #endif // MYGLWIDGET_H
