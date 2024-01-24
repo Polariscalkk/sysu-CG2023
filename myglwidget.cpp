@@ -247,7 +247,7 @@ void MyGLWidget::keyPressEvent(QKeyEvent* e) {
       if (m_Color > 11) {
         m_Color = 0;
       }
-        break;
+      break;
     case Qt::Key_Up:            // increase y-axis velocity
       if (m_ySpeed < 400.0f) {
         m_ySpeed += 5.0f;
