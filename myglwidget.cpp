@@ -21,8 +21,7 @@ const GLfloat MyGLWidget::COLORS[][3] = {   // particle colors
 };
 
 
-MyGLWidget::MyGLWidget(QWidget* parent) :
-    QGLWidget(parent) {
+MyGLWidget::MyGLWidget(QWidget* parent) : QGLWidget(parent) {
     m_FileName = "./fireworkPicture.png";   // load particle texture path
     m_Rainbow = false;
     m_Color = 0;
